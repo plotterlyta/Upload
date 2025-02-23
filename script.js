@@ -44,3 +44,14 @@ document.getElementById("uploadForm").addEventListener("submit", async function 
     loading.classList.add("hidden");
     submitBtn.style.display = "block";
 });
+
+// Change file label to 'Done' when a file is selected
+document.getElementById("file1").addEventListener("change", function() {
+    document.getElementById("file1Label").textContent = "✅ Done!";
+    document.getElementById("file1Label").classList.add("done");
+});
+
+document.getElementById("file2").addEventListener("change", function() {
+    document.getElementById("file2Label").textContent = "✅ Done!";
+    document.getElementById("file2Label").classList.add("done");
+});
