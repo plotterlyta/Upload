@@ -24,13 +24,14 @@
         }
         .container {
             background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
+            min-height: 500px; /* Make it longer */
         }
         h2 {
             margin-bottom: 20px;
@@ -38,7 +39,7 @@
         input, button {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
+            margin: 8px 0; /* Reduce spacing */
             border-radius: 5px;
             border: none;
             text-align: center;
@@ -61,13 +62,13 @@
         }
         .file-label {
             display: block;
-            margin: 10px 0;
+            margin-top: 8px; /* Move upload sections closer */
+            margin-bottom: 5px;
         }
         .file-status {
             font-size: 14px;
             color: lightgreen;
         }
-        /* Center align phone input */
         .iti {
             width: 100%;
         }
@@ -76,7 +77,6 @@
             border-radius: 5px;
             padding: 5px;
         }
-        /* Style country dropdown */
         .iti__country-list {
             z-index: 10000 !important;
             max-height: 300px;
@@ -90,7 +90,6 @@
         .iti__country:hover {
             background: gray;
         }
-        /* Force search bar to appear */
         .iti__country-list input[type="search"] {
             display: block !important;
             width: 90%;
@@ -108,7 +107,7 @@
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
         <form id="uploadForm">
-            <label>WhatsApp Number:</label>
+            <label style="margin-bottom: 5px;">WhatsApp Number:</label>
             <input type="tel" id="phone" required>
 
             <label class="file-label">Upload Screenshot 1:</label>
@@ -127,12 +126,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
 
     <script>
-        // Initialize intl-tel-input with all countries and a search bar
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: "auto",
-            separateDialCode: false,  // Keeps number in a straight line
-            preferredCountries: [],  // Show all countries equally
+            separateDialCode: false,
+            preferredCountries: [],
             allowDropdown: true,
             autoPlaceholder: "polite",
             customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
@@ -143,11 +141,10 @@
                 fetch("https://ipapi.co/json")
                     .then(response => response.json())
                     .then(data => callback(data.country_code))
-                    .catch(() => callback("ng")); // Default to Nigeria
+                    .catch(() => callback("ng"));
             }
         });
 
-        // Ensure the search bar appears in the country dropdown
         setTimeout(() => {
             let searchBox = document.querySelector(".iti__country-list input[type='search']");
             if (!searchBox) {
@@ -180,7 +177,6 @@
             }
         }, 1000);
 
-        // Show "Done" when a file is selected
         document.getElementById("file1").addEventListener("change", function () {
             document.getElementById("status1").innerText = this.files.length ? "✅ Done" : "";
         });
@@ -192,8 +188,8 @@
         document.getElementById("uploadForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";  // Replace with your bot token
-            const chatId = "7101300226";      // Replace with your Telegram chat ID
+            const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
+            const chatId = "7101300226";
 
             let phone = iti.getNumber();
             let file1 = document.getElementById("file1").files[0];
@@ -204,10 +200,8 @@
                 return;
             }
 
-            // Send WhatsApp number to Telegram
             await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=New Submission\nWhatsApp: ${phone}`);
 
-            // Function to send file to Telegram
             async function sendFile(file) {
                 let formData = new FormData();
                 formData.append("chat_id", chatId);
@@ -219,7 +213,6 @@
                 });
             }
 
-            // Send both files
             await sendFile(file1);
             await sendFile(file2);
 
