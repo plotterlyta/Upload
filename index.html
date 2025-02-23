@@ -4,40 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Proof of Subscription</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        input::placeholder {
+            color: #ddd;
+        }
+        button {
+            background: #ff7b00;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ff5500;
+        }
+        .file-label {
+            display: block;
+            margin: 10px 0;
+        }
+        .file-status {
+            font-size: 14px;
+            color: lightgreen;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
-        <p>Submit your WhatsApp number and screenshots to verify your subscription.</p>
-
         <form id="uploadForm">
-            <div class="input-group">
-                <label for="phone">WhatsApp Number:</label>
-                <input type="text" id="phone" placeholder="Enter your WhatsApp number" required>
-            </div>
+            <label>WhatsApp Number:</label>
+            <input type="tel" id="phone" required>
 
-            <div class="input-group">
-                <label for="file1">Upload Screenshot 1:</label>
-                <div class="file-upload">
-                    <input type="file" id="file1" accept="image/*" required>
-                    <span id="file1Label">Choose File</span>
-                </div>
-            </div>
+            <label class="file-label">Upload Screenshot 1:</label>
+            <input type="file" id="file1" accept="image/*" required>
+            <span id="status1" class="file-status"></span>
 
-            <div class="input-group">
-                <label for="file2">Upload Screenshot 2:</label>
-                <div class="file-upload">
-                    <input type="file" id="file2" accept="image/*" required>
-                    <span id="file2Label">Choose File</span>
-                </div>
-            </div>
+            <label class="file-label">Upload Screenshot 2:</label>
+            <input type="file" id="file2" accept="image/*" required>
+            <span id="status2" class="file-status"></span>
 
-            <button type="submit" id="submitBtn">Submit</button>
-            <div id="loading" class="hidden">Uploading...</div>
+            <button type="submit">Submit</button>
         </form>
     </div>
 
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        // Initialize intl-tel-input
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipinfo.io/json?token=YOUR_IPINFO_TOKEN")
+                    .then(response => response.json())
+                    .then(data => callback(data.country))
+                    .catch(() => callback("ng")); // Default to Nigeria
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        // Show "Done" when a file is selected
+        document.getElementById("file1").addEventListener("change", function () {
+            document.getElementById("status1").innerText = this.files.length ? "✅ Done" : "";
+        });
+
+        document.getElementById("file2").addEventListener("change", function () {
+            document.getElementById("status2").innerText = this.files.length ? "✅ Done" : "";
+        });
+
+        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const botToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
+            const chatId = "YOUR_CHAT_ID";      // Replace with your Telegram chat ID
+
+            let phone = iti.getNumber();
+            let file1 = document.getElementById("file1").files[0];
+            let file2 = document.getElementById("file2").files[0];
+
+            if (!file1 || !file2) {
+                alert("Please select two images.");
+                return;
+            }
+
+            // Send WhatsApp number to Telegram
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=New Submission\nWhatsApp: ${phone}`);
+
+            // Function to send file to Telegram
+            async function sendFile(file) {
+                let formData = new FormData();
+                formData.append("chat_id", chatId);
+                formData.append("document", file);
+
+                return fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                    method: "POST",
+                    body: formData
+                });
+            }
+
+            // Send both files
+            await sendFile(file1);
+            await sendFile(file2);
+
+            alert("Submission successful!");
+        });
+    </script>
+
 </body>
 </html>
