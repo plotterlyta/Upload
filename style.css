@@ -1,51 +1,93 @@
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
 }
+
+/* Form Container */
 .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 320px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
     text-align: center;
+    color: #fff;
 }
 
+/* Heading */
 h2 {
-    color: #333;
+    margin-bottom: 5px;
+    font-size: 22px;
 }
 
-p {
-    color: #666;
-    font-size: 14px;
+/* Input Groups */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
 }
 
 label {
     font-weight: bold;
+    font-size: 14px;
     display: block;
-    margin-top: 10px;
+    margin-bottom: 5px;
 }
 
+/* Input Fields */
 input {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    width: 100%;
     padding: 10px;
-    margin-top: 15px;
     border: none;
     border-radius: 5px;
-    background: #28a745;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    outline: none;
+}
+
+/* Custom File Upload */
+.file-upload {
+    position: relative;
+    width: 100%;
+}
+
+.file-upload input {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-upload span {
+    display: block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.file-upload span:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Submit Button */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background: #ff5722;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -53,9 +95,10 @@ button {
 }
 
 button:hover {
-    background: #218838;
+    background: #e64a19;
 }
 
+/* Loading Animation */
 .hidden {
     display: none;
 }
@@ -63,9 +106,9 @@ button:hover {
 #loading {
     margin-top: 10px;
     font-size: 14px;
-    color: #666;
     animation: blink 1s infinite;
 }
+
 @keyframes blink {
     50% { opacity: 0.6; }
 }
