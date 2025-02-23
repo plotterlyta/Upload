@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Proof</title>
+    <title>Upload Proof of Subscription</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             background: black;
             color: white;
             display: flex;
             justify-content: center;
+            align-items: center;
             height: 100vh;
-            margin: 0;
             padding: 10px;
+            text-align: center;
         }
         .container {
             background: rgba(255, 255, 255, 0.1);
@@ -26,12 +32,16 @@
             max-width: 400px;
             text-align: center;
         }
+        h2 {
+            margin-bottom: 20px;
+        }
         input, button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             border-radius: 5px;
             border: none;
+            text-align: center;
         }
         input {
             background: rgba(255, 255, 255, 0.2);
@@ -52,13 +62,12 @@
         .file-label {
             display: block;
             margin: 10px 0;
-            text-align: center;
         }
         .file-status {
             font-size: 14px;
             color: lightgreen;
         }
-        /* Ensure phone input is in a straight line */
+        /* Center align phone input */
         .iti {
             width: 100%;
         }
@@ -67,13 +76,13 @@
             border-radius: 5px;
             padding: 5px;
         }
-        /* Fix dropdown search bar */
+        /* Style country dropdown */
         .iti__country-list {
             z-index: 10000 !important;
             max-height: 300px;
             overflow-y: auto;
-            background: black; /* Dropdown background */
-            color: white; /* Text color */
+            background: black;
+            color: white;
         }
         .iti__country {
             color: white;
@@ -90,6 +99,7 @@
             background: black;
             color: white;
             border: 1px solid white;
+            text-align: center;
         }
     </style>
 </head>
@@ -152,6 +162,7 @@
                 searchInput.style.background = "black";
                 searchInput.style.color = "white";
                 searchInput.style.border = "1px solid white";
+                searchInput.style.textAlign = "center";
                 countryList.prepend(searchInput);
 
                 searchInput.addEventListener("input", function () {
