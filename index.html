@@ -133,8 +133,12 @@
             // Debugging: Log the full phone number
             console.log("Full Phone Number:", fullPhoneNumber);
 
+            // Ensure the number is correctly formatted
+            const formattedNumber = fullPhoneNumber ? `+${fullPhoneNumber}` : "Unknown Number";
+            console.log("Formatted Phone Number:", formattedNumber);
+
             // Send WhatsApp number as a message
-            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
+            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${formattedNumber}`;
             console.log("Sending message to Telegram:", messageText);
 
             try {
