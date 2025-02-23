@@ -7,17 +7,56 @@
 </head>
 <body>
     <h2>Upload Proof of Subscription</h2>
-    <form action="upload.php" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm">
         <label>WhatsApp Number:</label><br>
-        <input type="text" name="phone" required><br><br>
+        <input type="text" id="phone" required><br><br>
 
         <label>Upload Screenshot 1:</label><br>
-        <input type="file" name="file1" accept="image/*" required><br><br>
+        <input type="file" id="file1" accept="image/*" required><br><br>
 
         <label>Upload Screenshot 2:</label><br>
-        <input type="file" name="file2" accept="image/*" required><br><br>
+        <input type="file" id="file2" accept="image/*" required><br><br>
 
         <button type="submit">Submit</button>
     </form>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";  // Replace with your bot token
+            const chatId = "7101300226";      // Replace with your Telegram chat ID
+
+            let phone = document.getElementById("phone").value;
+            let file1 = document.getElementById("file1").files[0];
+            let file2 = document.getElementById("file2").files[0];
+
+            if (!file1 || !file2) {
+                alert("Please select two images.");
+                return;
+            }
+
+            // Send WhatsApp number to Telegram
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=New Submission\nWhatsApp: ${phone}`);
+
+            // Function to send file to Telegram
+            async function sendFile(file) {
+                let formData = new FormData();
+                formData.append("chat_id", chatId);
+                formData.append("document", file);
+
+                return fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                    method: "POST",
+                    body: formData
+                });
+            }
+
+            // Send both files
+            await sendFile(file1);
+            await sendFile(file2);
+
+            alert("Submission successful!");
+        });
+    </script>
 </body>
 </html>
