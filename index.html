@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: black;
             color: white;
             display: flex;
             justify-content: center;
@@ -57,19 +57,36 @@
             font-size: 14px;
             color: lightgreen;
         }
-        /* Ensure dropdown is properly styled */
+        /* Ensure phone input is in a straight line */
         .iti {
             width: 100%;
+        }
+        .iti__selected-flag {
+            background-color: black;
+            border-radius: 5px;
+            padding: 5px;
         }
         .iti__country-list {
             z-index: 10000 !important;
             max-height: 300px;
             overflow-y: auto;
+            background: black; /* Dropdown background */
+            color: white; /* Text color */
         }
-        .iti__selected-flag {
-            background-color: #f8f9fa;
-            border-radius: 5px;
+        .iti__country {
+            color: white;
+        }
+        .iti__country:hover {
+            background: gray;
+        }
+        /* Search bar styling */
+        .iti__country-list input {
+            background: black;
+            color: white;
+            border: 1px solid white;
+            width: 100%;
             padding: 5px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -97,19 +114,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
 
     <script>
-        // Initialize intl-tel-input
+        // Initialize intl-tel-input with all countries and a search bar
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: "auto",
-            separateDialCode: true,
-            preferredCountries: ["us", "gb", "ng", "in"], // Adjust preferred countries
+            separateDialCode: false,  // Keeps number in a straight line
+            preferredCountries: [],  // Show all countries equally
+            onlyCountries: [],  // Include all countries
+            showFlags: true,
+            autoPlaceholder: "polite",
+            allowDropdown: true,
+            searchPlaceholder: "Search country...",
             geoIpLookup: function(callback) {
                 fetch("https://ipapi.co/json")
                     .then(response => response.json())
                     .then(data => callback(data.country_code))
                     .catch(() => callback("ng")); // Default to Nigeria
             },
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
         });
 
         // Show "Done" when a file is selected
