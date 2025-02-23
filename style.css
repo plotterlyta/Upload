@@ -1,4 +1,4 @@
-
+/* Cool Gradient Background */
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -79,6 +79,12 @@ input {
 
 .file-upload span:hover {
     background: rgba(255, 255, 255, 0.4);
+}
+
+/* Show 'Done' when file is selected */
+.file-upload span.done {
+    background: #28a745;
+    color: white;
 }
 
 /* Submit Button */
