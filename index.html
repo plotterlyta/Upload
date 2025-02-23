@@ -5,110 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Proof of Subscription</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <style>
-        /* General Styles */
         body {
+            background-color: black;
             font-family: Arial, sans-serif;
-            background: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
         }
-
         .container {
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
             width: 90%;
             max-width: 400px;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            margin: 50px auto;
+            border-radius: 10px;
             text-align: center;
         }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            text-align: left;
-            margin-top: 10px;
-        }
-
         input, button {
-            margin-top: 5px;
+            width: 100%;
             padding: 10px;
+            margin: 10px 0;
             border-radius: 5px;
             border: none;
             font-size: 16px;
         }
-
         input {
-            background: rgba(255, 255, 255, 0.2);
+            background-color: #333;
             color: white;
         }
-
         button {
-            background: orange;
+            background-color: orange;
             color: white;
-            font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
         }
-
-        button:hover {
-            background: darkorange;
-        }
-
-        /* Ensure Dropdown List Background is Black */
-        .iti__country-list {
-            background: black !important;
-            color: white !important;
-            border-radius: 5px;
-            padding: 5px 0;
-        }
-
-        .iti__country {
-            color: white !important;
-            padding: 10px;
-        }
-
-        .iti__country:hover {
-            background: gray !important;
-        }
-
-        /* Keep input field unchanged */
-        .iti input,
-        .iti input[type="tel"] {
-            background: rgba(255, 255, 255, 0.2) !important;
+        .file-input {
+            background-color: #444;
             color: white;
+        }
+        .iti {
+            width: 100%;
+        }
+        .iti--separate-dial-code .iti__selected-flag {
+            background: black !important; /* Makes only the dropdown background black */
+            border-radius: 5px 0 0 5px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
+        
         <form id="uploadForm">
-            <label for="phone">WhatsApp Number:</label>
-            <input type="tel" id="phone" name="phone" required>
-
-            <label for="screenshot1">Upload Screenshot 1:</label>
-            <input type="file" id="screenshot1" name="screenshot1" required>
-
-            <label for="screenshot2">Upload Screenshot 2:</label>
-            <input type="file" id="screenshot2" name="screenshot2" required>
-
+            <label>WhatsApp Number:</label>
+            <input id="phone" type="tel" required>
+            
+            <label>Upload Screenshot 1:</label>
+            <input type="file" id="screenshot1" class="file-input" accept="image/*" required>
+            
+            <label>Upload Screenshot 2:</label>
+            <input type="file" id="screenshot2" class="file-input" accept="image/*" required>
+            
             <button type="submit">Submit</button>
         </form>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
@@ -121,7 +82,15 @@
 
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
+            
+            // Get the full phone number with country code
             const fullPhoneNumber = iti.getNumber();
+
+            if (!fullPhoneNumber) {
+                alert("Please enter a valid WhatsApp number.");
+                return;
+            }
+
             const screenshot1 = document.getElementById("screenshot1").files[0];
             const screenshot2 = document.getElementById("screenshot2").files[0];
 
@@ -131,11 +100,11 @@
             }
 
             // Send WhatsApp number as a message
-            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
+            let messageText = `📞 *WhatsApp Number:* ${fullPhoneNumber}`;
             await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: messageText })
+                body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: "Markdown" })
             });
 
             // Function to send images
@@ -157,5 +126,6 @@
             alert("Proof of subscription submitted successfully!");
         });
     </script>
+
 </body>
 </html>
