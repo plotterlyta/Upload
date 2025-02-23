@@ -57,6 +57,20 @@
             font-size: 14px;
             color: lightgreen;
         }
+        /* Ensure dropdown is properly styled */
+        .iti {
+            width: 100%;
+        }
+        .iti__country-list {
+            z-index: 10000 !important;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .iti__selected-flag {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -80,15 +94,19 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
     <script>
         // Initialize intl-tel-input
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: "auto",
+            separateDialCode: true,
+            preferredCountries: ["us", "gb", "ng", "in"], // Adjust preferred countries
             geoIpLookup: function(callback) {
-                fetch("https://ipinfo.io/json?token=YOUR_IPINFO_TOKEN")
+                fetch("https://ipapi.co/json")
                     .then(response => response.json())
-                    .then(data => callback(data.country))
+                    .then(data => callback(data.country_code))
                     .catch(() => callback("ng")); // Default to Nigeria
             },
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
