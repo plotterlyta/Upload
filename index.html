@@ -49,7 +49,7 @@
         <h2>Upload Proof of Subscription</h2>
         <form id="uploadForm">
             <label>WhatsApp Number:</label>
-            <input id="phone" type="tel" placeholder="Enter your WhatsApp number">
+            <input id="phone" type="tel" placeholder="Enter your WhatsApp number" required>
 
             <label>Upload Screenshot 1:</label>
             <input type="file" id="screenshot1" accept="image/*" required>
@@ -65,7 +65,13 @@
     <script>
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
-            initialCountry: "ng",
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipapi.co/json")
+                    .then(response => response.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback("NG")); // Default to Nigeria if failed
+            },
             separateDialCode: true
         });
 
@@ -75,11 +81,11 @@
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
 
-            // Get full WhatsApp number with country code
+            // Ensure the number is properly formatted
             const fullPhoneNumber = iti.getNumber();
             console.log("Full Phone Number: ", fullPhoneNumber);
 
-            if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
+            if (!iti.isValidNumber()) {
                 alert("Please enter a valid WhatsApp number.");
                 return;
             }
