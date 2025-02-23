@@ -130,24 +130,39 @@
                 return;
             }
 
+            // Debugging: Log the full phone number
+            console.log("Full Phone Number:", fullPhoneNumber);
+
             // Send WhatsApp number as a message
             let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: messageText })
-            });
+            console.log("Sending message to Telegram:", messageText);
+
+            try {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: chatId, text: messageText })
+                });
+                console.log("Message sent to Telegram successfully.");
+            } catch (error) {
+                console.error("Error sending message to Telegram:", error);
+            }
 
             // Function to send images
             async function sendImage(file) {
                 let formData = new FormData();
                 formData.append("chat_id", chatId);
                 formData.append("photo", file);
-                
-                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-                    method: "POST",
-                    body: formData
-                });
+
+                try {
+                    await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                        method: "POST",
+                        body: formData
+                    });
+                    console.log("Image sent to Telegram successfully.");
+                } catch (error) {
+                    console.error("Error sending image to Telegram:", error);
+                }
             }
 
             // Send both screenshots
