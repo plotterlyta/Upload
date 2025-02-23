@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Proof of Subscription</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             background: black;
@@ -19,206 +15,148 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding: 10px;
-            text-align: center;
         }
+
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
+            background: #222;
+            padding: 20px;
             border-radius: 10px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 420px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            min-height: 650px;
         }
+
         h2 {
             margin-bottom: 20px;
         }
-        label {
-            display: block;
-            margin-bottom: 3px;
-            font-size: 14px;
+
+        form {
+            display: flex;
+            flex-direction: column;
         }
+
+        label {
+            text-align: left;
+            margin-top: 10px;
+        }
+
         input, button {
-            width: 100%;
-            padding: 12px;
-            margin: 6px 0;
+            margin-top: 5px;
+            padding: 10px;
             border-radius: 5px;
             border: none;
-            text-align: center;
+            font-size: 16px;
         }
+
         input {
             background: rgba(255, 255, 255, 0.2);
             color: white;
         }
-        input::placeholder {
-            color: #ddd;
-        }
+
         button {
-            background: #ff7b00;
+            background: orange;
             color: white;
-            cursor: pointer;
             font-weight: bold;
-        }
-        button:hover {
-            background: #ff5500;
-        }
-        .file-label {
-            display: block;
-            margin-top: 8px;
-            margin-bottom: 5px;
-        }
-        .file-status {
-            font-size: 14px;
-            color: lightgreen;
-        }
-        .iti {
-            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
         }
 
-        /* Styling for country dropdown */
+        button:hover {
+            background: darkorange;
+        }
+
+        /* Style only the dropdown list */
         .iti__country-list {
-            background: black !important;  /* Set background to black */
+            background: black !important;  /* Set dropdown background to black */
             color: white !important;       /* Ensure text remains visible */
             border-radius: 5px;            /* Optional: Rounded corners */
             padding: 5px 0;                /* Better spacing */
         }
+
+        /* Ensure individual country text remains white */
         .iti__country {
-            color: white !important;       /* Ensure text remains visible */
-            padding: 10px;                 /* Better spacing */
+            color: white !important;
+            padding: 10px;
         }
+
+        /* Highlight selection */
         .iti__country:hover {
-            background: gray !important;   /* Highlight selection */
+            background: gray !important;
         }
-        
-        /* Adjust phone input */
-        #phone {
-            width: 80%;
-            display: block;
-            margin: 0 auto;
+
+        /* Keep input field unchanged */
+        .iti input,
+        .iti input[type="tel"] {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
         <form id="uploadForm">
-            <label>WhatsApp Number:</label>
-            <input type="tel" id="phone" required>
+            <label for="phone">WhatsApp Number:</label>
+            <input type="tel" id="phone" name="phone" required>
 
-            <label class="file-label">Upload Screenshot 1:</label>
-            <input type="file" id="file1" accept="image/*" required>
-            <span id="status1" class="file-status"></span>
+            <label for="screenshot1">Upload Screenshot 1:</label>
+            <input type="file" id="screenshot1" name="screenshot1" required>
 
-            <label class="file-label">Upload Screenshot 2:</label>
-            <input type="file" id="file2" accept="image/*" required>
-            <span id="status2" class="file-status"></span>
+            <label for="screenshot2">Upload Screenshot 2:</label>
+            <input type="file" id="screenshot2" name="screenshot2" required>
 
             <button type="submit">Submit</button>
         </form>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
-
     <script>
-        const phoneInput = document.querySelector("#phone");
-        const iti = window.intlTelInput(phoneInput, {
-            initialCountry: "auto",
-            separateDialCode: false,
-            preferredCountries: [],
-            allowDropdown: true,
-            autoPlaceholder: "polite",
-            customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
-                return selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
-            },
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-            geoIpLookup: function(callback) {
-                fetch("https://ipapi.co/json")
-                    .then(response => response.json())
-                    .then(data => callback(data.country_code))
-                    .catch(() => callback("ng"));
-            }
+        var input = document.querySelector("#phone");
+        var iti = window.intlTelInput(input, {
+            initialCountry: "ng",
+            separateDialCode: true
         });
 
-        // Add a search bar for country selection
-        setTimeout(() => {
-            let searchBox = document.querySelector(".iti__country-list input[type='search']");
-            if (!searchBox) {
-                let countryList = document.querySelector(".iti__country-list");
-                let searchInput = document.createElement("input");
-                searchInput.setAttribute("type", "search");
-                searchInput.setAttribute("placeholder", "Search country...");
-                searchInput.style.display = "block";
-                searchInput.style.width = "90%";
-                searchInput.style.margin = "5px auto";
-                searchInput.style.padding = "5px";
-                searchInput.style.background = "black";
-                searchInput.style.color = "white";
-                searchInput.style.border = "1px solid white";
-                searchInput.style.textAlign = "center";
-                countryList.prepend(searchInput);
+        document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-                searchInput.addEventListener("input", function () {
-                    let filter = searchInput.value.toLowerCase();
-                    let countries = document.querySelectorAll(".iti__country");
-                    countries.forEach(country => {
-                        let countryName = country.textContent.toLowerCase();
-                        if (countryName.includes(filter)) {
-                            country.style.display = "block";
-                        } else {
-                            country.style.display = "none";
-                        }
-                    });
-                });
-            }
-        }, 1000);
+            const botToken = "YOUR_TELEGRAM_BOT_TOKEN";
+            const chatId = "YOUR_TELEGRAM_CHAT_ID";
+            const fullPhoneNumber = iti.getNumber();
+            const screenshot1 = document.getElementById("screenshot1").files[0];
+            const screenshot2 = document.getElementById("screenshot2").files[0];
 
-        document.getElementById("file1").addEventListener("change", function () {
-            document.getElementById("status1").innerText = this.files.length ? "✅ Done" : "";
-        });
-
-        document.getElementById("file2").addEventListener("change", function () {
-            document.getElementById("status2").innerText = this.files.length ? "✅ Done" : "";
-        });
-
-        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
-
-            const botToken = "YOUR_BOT_TOKEN";
-            const chatId = "YOUR_CHAT_ID";
-
-            let phone = iti.getNumber();
-            let file1 = document.getElementById("file1").files[0];
-            let file2 = document.getElementById("file2").files[0];
-
-            if (!file1 || !file2) {
-                alert("Please select two images.");
+            if (!screenshot1 || !screenshot2) {
+                alert("Please upload both screenshots.");
                 return;
             }
 
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=New Submission\nWhatsApp: ${phone}`);
+            // Send WhatsApp number as a message
+            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: chatId, text: messageText })
+            });
 
-            async function sendFile(file) {
+            // Function to send images
+            async function sendImage(file) {
                 let formData = new FormData();
                 formData.append("chat_id", chatId);
-                formData.append("document", file);
-
-                return fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                formData.append("photo", file);
+                
+                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
                     method: "POST",
                     body: formData
                 });
             }
 
-            await sendFile(file1);
-            await sendFile(file2);
+            // Send both screenshots
+            await sendImage(screenshot1);
+            await sendImage(screenshot2);
 
-            alert("Submission successful!");
+            alert("Proof of subscription submitted successfully!");
         });
     </script>
-
 </body>
 </html>
