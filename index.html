@@ -9,17 +9,29 @@
 <body>
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
-        <p>Please upload your screenshots and enter your WhatsApp number.</p>
+        <p>Submit your WhatsApp number and screenshots to verify your subscription.</p>
 
         <form id="uploadForm">
-            <label for="phone">WhatsApp Number:</label>
-            <input type="text" id="phone" placeholder="Enter your WhatsApp number" required>
+            <div class="input-group">
+                <label for="phone">WhatsApp Number:</label>
+                <input type="text" id="phone" placeholder="Enter your WhatsApp number" required>
+            </div>
 
-            <label for="file1">Upload Screenshot 1:</label>
-            <input type="file" id="file1" accept="image/*" required>
+            <div class="input-group">
+                <label for="file1">Upload Screenshot 1:</label>
+                <div class="file-upload">
+                    <input type="file" id="file1" accept="image/*" required>
+                    <span>Choose File</span>
+                </div>
+            </div>
 
-            <label for="file2">Upload Screenshot 2:</label>
-            <input type="file" id="file2" accept="image/*" required>
+            <div class="input-group">
+                <label for="file2">Upload Screenshot 2:</label>
+                <div class="file-upload">
+                    <input type="file" id="file2" accept="image/*" required>
+                    <span>Choose File</span>
+                </div>
+            </div>
 
             <button type="submit" id="submitBtn">Submit</button>
             <div id="loading" class="hidden">Uploading...</div>
