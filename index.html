@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Proof of Subscription</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
     <style>
         body {
             background-color: black;
+            color: white;
             font-family: Arial, sans-serif;
+            text-align: center;
         }
         .container {
+            background: #1c1c1c;
+            padding: 20px;
             width: 90%;
             max-width: 400px;
-            background-color: #222;
-            color: white;
-            padding: 20px;
             margin: 50px auto;
             border-radius: 10px;
-            text-align: center;
         }
         input, button {
             width: 100%;
@@ -30,24 +29,17 @@
             font-size: 16px;
         }
         input {
-            background-color: #333;
+            background: #333;
             color: white;
         }
         button {
-            background-color: orange;
+            background: orange;
             color: white;
+            font-weight: bold;
             cursor: pointer;
         }
-        .file-input {
-            background-color: #444;
-            color: white;
-        }
-        .iti {
-            width: 100%;
-        }
-        .iti--separate-dial-code .iti__selected-flag {
-            background: black !important; /* Makes only the dropdown background black */
-            border-radius: 5px 0 0 5px;
+        button:hover {
+            background: darkorange;
         }
     </style>
 </head>
@@ -55,21 +47,21 @@
 
     <div class="container">
         <h2>Upload Proof of Subscription</h2>
-        
         <form id="uploadForm">
             <label>WhatsApp Number:</label>
-            <input id="phone" type="tel" required>
-            
+            <input id="phone" type="tel" placeholder="Enter your WhatsApp number">
+
             <label>Upload Screenshot 1:</label>
-            <input type="file" id="screenshot1" class="file-input" accept="image/*" required>
-            
+            <input type="file" id="screenshot1" accept="image/*" required>
+
             <label>Upload Screenshot 2:</label>
-            <input type="file" id="screenshot2" class="file-input" accept="image/*" required>
-            
+            <input type="file" id="screenshot2" accept="image/*" required>
+
             <button type="submit">Submit</button>
         </form>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
@@ -82,11 +74,12 @@
 
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
-            
-            // Get the full phone number with country code
-            const fullPhoneNumber = iti.getNumber();
 
-            if (!fullPhoneNumber) {
+            // Get full WhatsApp number with country code
+            const fullPhoneNumber = iti.getNumber();
+            console.log("Full Phone Number: ", fullPhoneNumber);
+
+            if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
                 alert("Please enter a valid WhatsApp number.");
                 return;
             }
@@ -101,29 +94,19 @@
 
             // Send WhatsApp number as a message
             let messageText = `📞 *WhatsApp Number:* ${fullPhoneNumber}`;
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            let response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: "Markdown" })
             });
 
-            // Function to send images
-            async function sendImage(file) {
-                let formData = new FormData();
-                formData.append("chat_id", chatId);
-                formData.append("photo", file);
-                
-                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-                    method: "POST",
-                    body: formData
-                });
+            let result = await response.json();
+            if (!result.ok) {
+                alert("Error sending number: " + result.description);
+                return;
             }
 
-            // Send both screenshots
-            await sendImage(screenshot1);
-            await sendImage(screenshot2);
-
-            alert("Proof of subscription submitted successfully!");
+            alert("WhatsApp number sent successfully!");
         });
     </script>
 
