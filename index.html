@@ -3,60 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Screenshots</title>
+    <title>Upload Proof of Subscription</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Upload Proof of Subscription</h2>
-    <form id="uploadForm">
-        <label>WhatsApp Number:</label><br>
-        <input type="text" id="phone" required><br><br>
+    <div class="container">
+        <h2>Upload Proof of Subscription</h2>
+        <p>Please upload your screenshots and enter your WhatsApp number.</p>
 
-        <label>Upload Screenshot 1:</label><br>
-        <input type="file" id="file1" accept="image/*" required><br><br>
+        <form id="uploadForm">
+            <label for="phone">WhatsApp Number:</label>
+            <input type="text" id="phone" placeholder="Enter your WhatsApp number" required>
 
-        <label>Upload Screenshot 2:</label><br>
-        <input type="file" id="file2" accept="image/*" required><br><br>
+            <label for="file1">Upload Screenshot 1:</label>
+            <input type="file" id="file1" accept="image/*" required>
 
-        <button type="submit">Submit</button>
-    </form>
+            <label for="file2">Upload Screenshot 2:</label>
+            <input type="file" id="file2" accept="image/*" required>
 
-    <script>
-        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+            <button type="submit" id="submitBtn">Submit</button>
+            <div id="loading" class="hidden">Uploading...</div>
+        </form>
+    </div>
 
-            const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";  // Replace with your bot token
-            const chatId = "7101300226";      // Replace with your Telegram chat ID
-
-            let phone = document.getElementById("phone").value;
-            let file1 = document.getElementById("file1").files[0];
-            let file2 = document.getElementById("file2").files[0];
-
-            if (!file1 || !file2) {
-                alert("Please select two images.");
-                return;
-            }
-
-            // Send WhatsApp number to Telegram
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=New Submission\nWhatsApp: ${phone}`);
-
-            // Function to send file to Telegram
-            async function sendFile(file) {
-                let formData = new FormData();
-                formData.append("chat_id", chatId);
-                formData.append("document", file);
-
-                return fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
-                    method: "POST",
-                    body: formData
-                });
-            }
-
-            // Send both files
-            await sendFile(file1);
-            await sendFile(file2);
-
-            alert("Submission successful!");
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
