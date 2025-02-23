@@ -15,6 +15,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 10px;
         }
         .container {
             background: rgba(255, 255, 255, 0.1);
@@ -22,7 +23,7 @@
             border-radius: 10px;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 90%;
+            width: 100%;
             max-width: 400px;
             text-align: center;
         }
@@ -66,6 +67,7 @@
             border-radius: 5px;
             padding: 5px;
         }
+        /* Fix dropdown search bar */
         .iti__country-list {
             z-index: 10000 !important;
             max-height: 300px;
@@ -79,14 +81,15 @@
         .iti__country:hover {
             background: gray;
         }
-        /* Search bar styling */
-        .iti__country-list input {
+        /* Force search bar to appear */
+        .iti__country-list input[type="search"] {
+            display: block !important;
+            width: 90%;
+            margin: 5px auto;
+            padding: 5px;
             background: black;
             color: white;
             border: 1px solid white;
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -120,18 +123,51 @@
             initialCountry: "auto",
             separateDialCode: false,  // Keeps number in a straight line
             preferredCountries: [],  // Show all countries equally
-            onlyCountries: [],  // Include all countries
-            showFlags: true,
-            autoPlaceholder: "polite",
             allowDropdown: true,
-            searchPlaceholder: "Search country...",
+            autoPlaceholder: "polite",
+            customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+                return selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
             geoIpLookup: function(callback) {
                 fetch("https://ipapi.co/json")
                     .then(response => response.json())
                     .then(data => callback(data.country_code))
                     .catch(() => callback("ng")); // Default to Nigeria
-            },
+            }
         });
+
+        // Ensure the search bar appears in the country dropdown
+        setTimeout(() => {
+            let searchBox = document.querySelector(".iti__country-list input[type='search']");
+            if (!searchBox) {
+                let countryList = document.querySelector(".iti__country-list");
+                let searchInput = document.createElement("input");
+                searchInput.setAttribute("type", "search");
+                searchInput.setAttribute("placeholder", "Search country...");
+                searchInput.style.display = "block";
+                searchInput.style.width = "90%";
+                searchInput.style.margin = "5px auto";
+                searchInput.style.padding = "5px";
+                searchInput.style.background = "black";
+                searchInput.style.color = "white";
+                searchInput.style.border = "1px solid white";
+                countryList.prepend(searchInput);
+
+                searchInput.addEventListener("input", function () {
+                    let filter = searchInput.value.toLowerCase();
+                    let countries = document.querySelectorAll(".iti__country");
+                    countries.forEach(country => {
+                        let countryName = country.textContent.toLowerCase();
+                        if (countryName.includes(filter)) {
+                            country.style.display = "block";
+                        } else {
+                            country.style.display = "none";
+                        }
+                    });
+                });
+            }
+        }, 1000);
 
         // Show "Done" when a file is selected
         document.getElementById("file1").addEventListener("change", function () {
