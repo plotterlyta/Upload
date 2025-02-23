@@ -49,7 +49,7 @@
         <h2>Upload Proof of Subscription</h2>
         <form id="uploadForm">
             <label>WhatsApp Number:</label>
-            <input id="phone" type="tel" placeholder="Enter your WhatsApp number" required>
+            <input id="phone" type="tel" required>
 
             <label>Upload Screenshot 1:</label>
             <input type="file" id="screenshot1" accept="image/*" required>
@@ -81,14 +81,10 @@
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
 
-            // Get the full WhatsApp number with country code
+            // Get the WhatsApp number with country code
             const fullPhoneNumber = iti.getNumber();
-            console.log("📞 Full Phone Number: ", fullPhoneNumber);
 
-            if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
-                alert("Please enter a valid WhatsApp number.");
-                return;
-            }
+            console.log("📞 Full Phone Number: ", fullPhoneNumber); // Debugging log
 
             const screenshot1 = document.getElementById("screenshot1").files[0];
             const screenshot2 = document.getElementById("screenshot2").files[0];
@@ -101,23 +97,35 @@
             // Send WhatsApp number to Telegram
             try {
                 let messageText = `📞 *WhatsApp Number:* ${fullPhoneNumber}`;
-                let response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: "Markdown" })
                 });
 
-                let result = await response.json();
-                console.log("✅ Telegram API Response:", result);
+                // Send Screenshot 1
+                let formData1 = new FormData();
+                formData1.append("chat_id", chatId);
+                formData1.append("document", screenshot1);
 
-                if (!result.ok) {
-                    alert("Error sending number: " + result.description);
-                    return;
-                }
+                await fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                    method: "POST",
+                    body: formData1
+                });
 
-                alert("WhatsApp number sent successfully!");
+                // Send Screenshot 2
+                let formData2 = new FormData();
+                formData2.append("chat_id", chatId);
+                formData2.append("document", screenshot2);
+
+                await fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                    method: "POST",
+                    body: formData2
+                });
+
+                alert("Submission successful!");
             } catch (error) {
-                console.error("❌ Error sending WhatsApp number:", error);
+                console.error("❌ Error sending data:", error);
                 alert("Something went wrong. Check console for details.");
             }
         });
