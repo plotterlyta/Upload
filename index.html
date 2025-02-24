@@ -4,142 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Proof of Subscription</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
     <style>
-        /* General Styles */
         body {
             font-family: Arial, sans-serif;
-            background: black;
+            background-color: #000;
             color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            text-align: center;
+            padding: 20px;
         }
-
-        .container {
-            background: #222;
+        form {
+            background: #111;
             padding: 20px;
             border-radius: 10px;
-            width: 90%;
             max-width: 400px;
-            text-align: center;
+            margin: auto;
         }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            text-align: left;
-            margin-top: 10px;
-        }
-
         input, button {
-            margin-top: 5px;
+            width: 100%;
             padding: 10px;
+            margin: 10px 0;
             border-radius: 5px;
             border: none;
-            font-size: 16px;
         }
-
-        input {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
         button {
-            background: orange;
-            color: white;
+            background-color: #ffb400;
+            color: black;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
         }
-
-        button:hover {
-            background: darkorange;
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
         }
-
-        /* Popup (Modal) Styles */
-        .modal {
+        #loadingModal {
             display: none;
             position: fixed;
-            z-index: 999;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
-        .modal-content {
+        #loadingContent {
             background: #222;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            color: white;
-        }
-
-        .loader {
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid orange;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 10px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Upload Proof of Subscription</h2>
-        <form id="uploadForm">
-            <label for="phone">WhatsApp Number:</label>
-            <input type="tel" id="phone" name="phone" required>
 
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" required>
+    <h2>Upload Proof of Subscription</h2>
 
-            <label for="screenshot1">Upload Screenshot 1:</label>
-            <input type="file" id="screenshot1" name="screenshot1" required>
+    <form id="uploadForm">
+        <label>WhatsApp Number:</label>
+        <input type="tel" id="phone" required>
 
-            <label for="screenshot2">Upload Screenshot 2:</label>
-            <input type="file" id="screenshot2" name="screenshot2" required>
+        <label>Email Address:</label>
+        <input type="email" id="email" required>
 
-            <button type="submit" id="submitBtn">Submit</button>
-        </form>
-    </div>
+        <label>Upload Screenshot 1:</label>
+        <input type="file" id="screenshot1" accept="image/*" required>
 
-    <!-- Popup (Modal) -->
-    <div id="loadingModal" class="modal">
-        <div class="modal-content">
-            <div class="loader"></div>
+        <label>Upload Screenshot 2:</label>
+        <input type="file" id="screenshot2" accept="image/*" required>
+
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal">
+        <div id="loadingContent">
             <p>Submitting your proof, please wait...</p>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
-        var input = document.querySelector("#phone");
-        var iti = window.intlTelInput(input, {
-            initialCountry: "ng",
+        const phoneInput = document.getElementById("phone");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "auto",
+            geoIpLookup: callback => {
+                fetch("https://ipinfo.io?token=YOUR_IPINFO_TOKEN")
+                    .then(res => res.json())
+                    .then(data => callback(data.country))
+                    .catch(() => callback("us"));
+            },
             separateDialCode: true
         });
+
+        document.getElementById("loadingModal").style.display = "none"; // Hide popup on load
 
         document.getElementById("uploadForm").addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -166,52 +125,43 @@
                 return;
             }
 
-            // Show loading popup
-            document.getElementById("loadingModal").style.display = "flex";
+            document.getElementById("loadingModal").style.display = "flex"; // Show loading popup
             document.getElementById("submitBtn").disabled = true;
 
-            // Send WhatsApp number and email as a message
-            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}\n📧 Email: ${email}`;
-            console.log("Sending message to Telegram:", messageText);
-
             try {
+                let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}\n📧 Email: ${email}`;
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ chat_id: chatId, text: messageText })
                 });
-                console.log("Message sent to Telegram successfully.");
-            } catch (error) {
-                console.error("Error sending message to Telegram:", error);
-            }
 
-            // Function to send images
-            async function sendImage(file) {
-                let formData = new FormData();
-                formData.append("chat_id", chatId);
-                formData.append("photo", file);
-
-                try {
+                async function sendImage(file) {
+                    let formData = new FormData();
+                    formData.append("chat_id", chatId);
+                    formData.append("photo", file);
                     await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
                         method: "POST",
                         body: formData
                     });
-                    console.log("Image sent to Telegram successfully.");
-                } catch (error) {
-                    console.error("Error sending image to Telegram:", error);
                 }
+
+                await sendImage(screenshot1);
+                await sendImage(screenshot2);
+
+                document.getElementById("loadingModal").style.display = "none";
+                document.getElementById("submitBtn").disabled = false;
+                alert("Proof of subscription submitted successfully!");
+                document.getElementById("uploadForm").reset();
+
+            } catch (error) {
+                console.error("Error sending data to Telegram:", error);
+                document.getElementById("loadingModal").style.display = "none";
+                document.getElementById("submitBtn").disabled = false;
+                alert("Failed to submit. Please try again.");
             }
-
-            // Send both screenshots
-            await sendImage(screenshot1);
-            await sendImage(screenshot2);
-
-            // Hide loading popup and reset form
-            document.getElementById("loadingModal").style.display = "none";
-            document.getElementById("submitBtn").disabled = false;
-            alert("Proof of subscription submitted successfully!");
-            document.getElementById("uploadForm").reset();
         });
     </script>
+
 </body>
 </html>
