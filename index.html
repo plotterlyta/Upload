@@ -98,6 +98,9 @@
             <label for="phone">WhatsApp Number:</label>
             <input type="tel" id="phone" name="phone" required>
 
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required>
+
             <label for="screenshot1">Upload Screenshot 1:</label>
             <input type="file" id="screenshot1" name="screenshot1" required>
 
@@ -124,6 +127,7 @@
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
             const fullPhoneNumber = iti.getNumber(intlTelInputUtils.numberFormat.E164);
+            const email = document.getElementById("email").value.trim();
             const screenshot1 = document.getElementById("screenshot1").files[0];
             const screenshot2 = document.getElementById("screenshot2").files[0];
 
@@ -132,16 +136,18 @@
                 return;
             }
 
-            // Debugging: Log the full phone number
-            console.log("Full Phone Number:", fullPhoneNumber);
-
             if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
                 alert("Invalid phone number. Please enter a valid WhatsApp number.");
                 return;
             }
 
-            // Send WhatsApp number as a message
-            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
+            if (!email || email.trim() === "") {
+                alert("Invalid email address. Please enter a valid email.");
+                return;
+            }
+
+            // Send WhatsApp number and email as a message
+            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}\n📧 Email: ${email}`;
             console.log("Sending message to Telegram:", messageText);
 
             try {
@@ -180,4 +186,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
