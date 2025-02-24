@@ -109,6 +109,8 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
     <script>
         var input = document.querySelector("#phone");
         var iti = window.intlTelInput(input, {
@@ -121,7 +123,7 @@
 
             const botToken = "7607642073:AAGeyNCG4fuahJLGzqS-Zv2-oXbH_YpA6vQ";
             const chatId = "7101300226";
-            const fullPhoneNumber = iti.getNumber();
+            const fullPhoneNumber = iti.getNumber(intlTelInputUtils.numberFormat.E164);
             const screenshot1 = document.getElementById("screenshot1").files[0];
             const screenshot2 = document.getElementById("screenshot2").files[0];
 
@@ -133,12 +135,13 @@
             // Debugging: Log the full phone number
             console.log("Full Phone Number:", fullPhoneNumber);
 
-            // Ensure the number is correctly formatted
-            const formattedNumber = fullPhoneNumber ? `+${fullPhoneNumber}` : "Unknown Number";
-            console.log("Formatted Phone Number:", formattedNumber);
+            if (!fullPhoneNumber || fullPhoneNumber.trim() === "") {
+                alert("Invalid phone number. Please enter a valid WhatsApp number.");
+                return;
+            }
 
             // Send WhatsApp number as a message
-            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${formattedNumber}`;
+            let messageText = `New Proof of Subscription:\n📞 WhatsApp: ${fullPhoneNumber}`;
             console.log("Sending message to Telegram:", messageText);
 
             try {
@@ -177,4 +180,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
